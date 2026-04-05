@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Ticket #{{ ticket.id }} - OpenHelpDesk{% endblock %}
+{% block content %}
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-start">
+      <div>
+        <h3>{{ ticket.title }}</h3>
+        <p class="text-muted mb-1">Category: {{ ticket.category }} • Priority: {{ ticket.priority }}</p>
+        <span class="badge bg-{{ status_styles[ticket.status] }}">{{ ticket.status }}</span>
+      </div>
+      <div class="text-end">
+        <p class="mb-1"><strong>Submitted by</strong></p>
+        <p class="text-muted">{{ ticket.user.name }}</p>
+      </div>
+    </div>
+    <hr>
+    <p>{{ ticket.description }}</p>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card shadow-sm p-4 mb-4">
+      <h5>Update history</h5>
+      {% for update in updates %}
+        <div class="update-entry py-3 border-bottom">
+          <div class="d-flex justify-content-between">
+            <div>
+              <strong>{{ update.status }}</strong>
+              <p class="mb-1 text-muted">{{ update.comment or 'No comment' }}</p>
+            </div>
+            <small class="text-muted">{{ update.timestamp.strftime('%b %d, %Y %H:%M') }}</small>
+          </div>
+        </div>
+      {% else %}
+        <p class="text-muted">No updates yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if current_user.role == 'admin' %}
+  <div class="col-lg-5">
+    <div class="card shadow-sm p-4">
+      <h5>Admin ticket update</h5>
+      <form method="POST">
+        <div class="mb-3">
+          <label class="form-label">Change status</label>
+          <select class="form-select" name="status">
+            <option value="Open" {% if ticket.status == 'Open' %}selected{% endif %}>Open</option>
+            <option value="In Progress" {% if ticket.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+            <option value="Resolved" {% if ticket.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Comment</label>
+          <textarea class="form-control" name="comment" rows="4"></textarea>
+        </div>
+        <button class="btn btn-success w-100">Save Update</button>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

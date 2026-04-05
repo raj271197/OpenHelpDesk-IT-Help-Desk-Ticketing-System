@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard - OpenHelpDesk{% endblock %}
+{% block content %}
+<div class="row mb-4 align-items-center">
+  <div class="col-lg-8">
+    <div class="card p-5 mb-4">
+      <div class="d-flex align-items-center justify-content-between flex-column flex-md-row gap-3">
+        <div>
+          <h1 class="mb-2">Welcome back, {{ current_user.name }}!</h1>
+          <p class="text-muted mb-0">You are signed in as a <strong>{{ current_user.role|capitalize }}</strong>. Manage tickets, track progress, and stay on top of support requests.</p>
+        </div>
+        <a href="{{ url_for('ticket.create_ticket') }}" class="btn btn-primary btn-lg">New Ticket</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card p-4 status-card">
+      <h5 class="mb-3">Ticket Summary</h5>
+      <div class="status-item text-danger">Open <span>{{ total_open }}</span></div>
+      <div class="status-item text-warning">In Progress <span>{{ total_in_progress }}</span></div>
+      <div class="status-item text-success">Resolved <span>{{ total_resolved }}</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="card mb-4 p-4">
+  <form method="GET" class="row g-3 align-items-end">
+    <div class="col-sm-4">
+      <label class="form-label">Priority</label>
+      <select class="form-select" name="priority">
+        <option value="">Any</option>
+        <option value="Low" {% if request.args.get('priority') == 'Low' %}selected{% endif %}>Low</option>
+        <option value="Medium" {% if request.args.get('priority') == 'Medium' %}selected{% endif %}>Medium</option>
+        <option value="High" {% if request.args.get('priority') == 'High' %}selected{% endif %}>High</option>
+      </select>
+    </div>
+    <div class="col-sm-4">
+      <label class="form-label">Status</label>
+      <select class="form-select" name="status">
+        <option value="">Any</option>
+        <option value="Open" {% if request.args.get('status') == 'Open' %}selected{% endif %}>Open</option>
+        <option value="In Progress" {% if request.args.get('status') == 'In Progress' %}selected{% endif %}>In Progress</option>
+        <option value="Resolved" {% if request.args.get('status') == 'Resolved' %}selected{% endif %}>Resolved</option>
+      </select>
+    </div>
+    <div class="col-sm-4">
+      <button class="btn btn-primary w-100">Filter Tickets</button>
+    </div>
+  </form>
+</div>
+
+<div class="row g-4">
+  {% for ticket in tickets %}
+    <div class="col-md-6">
+      <a class="card ticket-card h-100 text-decoration-none text-dark" href="{{ url_for('ticket.ticket_detail', ticket_id=ticket.id) }}">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <h5>{{ ticket.title }}</h5>
+            <span class="badge bg-{{ priority_styles[ticket.priority] }}">{{ ticket.priority }}</span>
+          </div>
+          <p class="text-muted small mb-3">Category: {{ ticket.category }} • Created {{ ticket.created_at.strftime('%b %d, %Y') }}</p>
+          <p>{{ ticket.description[:120] }}{% if ticket.description|length > 120 %}...{% endif %}</p>
+        </div>
+        <div class="card-footer d-flex justify-content-between align-items-center">
+          <span class="badge bg-{{ status_styles[ticket.status] }}">{{ ticket.status }}</span>
+          <small class="text-muted">Updated {{ ticket.updated_at.strftime('%b %d') }}</small>
+        </div>
+      </a>
+    </div>
+  {% else %}
+    <div class="col-12">
+      <div class="card p-4 text-center shadow-sm">
+        <h5>No tickets found.</h5>
+        <p class="text-muted">Create a new ticket to start tracking support requests.</p>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

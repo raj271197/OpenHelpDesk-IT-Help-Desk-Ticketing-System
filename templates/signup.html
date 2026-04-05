@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Sign Up - OpenHelpDesk{% endblock %}
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: calc(100vh - 140px);">
+  <div class="col-md-5">
+    <div class="auth-form card">
+      <div class="card-body p-5">
+        <div class="text-center mb-4">
+          <h2 class="mb-2">Create your account</h2>
+          <p class="text-muted">Join OpenHelpDesk and start managing tickets instantly.</p>
+        </div>
+        <form method="POST" action="{{ url_for('auth.signup') }}">
+          <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input type="text" name="name" class="form-control" placeholder="John Doe" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email Address</label>
+            <input type="email" name="email" class="form-control" placeholder="you@example.com" required>
+          </div>
+          <div class="mb-4">
+            <label class="form-label">Password</label>
+            <input type="password" name="password" class="form-control" placeholder="Create a password" required>
+          </div>
+          <button class="btn btn-success w-100">Create Account</button>
+        </form>
+        <p class="text-center text-muted small mt-4">Already have an account? <a href="{{ url_for('auth.login') }}" class="text-decoration-none" style="color: var(--primary);">Sign in</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
