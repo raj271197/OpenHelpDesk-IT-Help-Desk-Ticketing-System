@@ -77,6 +77,22 @@ body {
   color: #93c5fd !important;
 }
 
+.logout-form {
+  margin: 0;
+}
+
+.logout-form .btn {
+  color: rgba(226, 232, 240, 0.9);
+  text-decoration: none;
+  border: none;
+  background: transparent;
+  padding: 0.5rem 1rem;
+}
+
+.logout-form .btn:hover {
+  color: #93c5fd;
+}
+
 .auth-form {
   max-width: 480px;
   margin-top: 3rem;

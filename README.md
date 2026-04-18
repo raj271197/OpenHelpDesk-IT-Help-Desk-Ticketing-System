@@ -7,7 +7,7 @@ A free, open-source IT help desk ticketing system built with Flask, SQLAlchemy, 
 - User signup and login
 - OTP login flow without paid email/SMS services
 - Role-based access: user and admin
-- Ticket creation, tracking, and status updates
+- Ticket creation, tracking, status updates, and deletion
 - Admin ticket updates with comments
 - Filter tickets by priority and status
 - Responsive UI with Bootstrap and custom styling
@@ -40,7 +40,7 @@ A free, open-source IT help desk ticketing system built with Flask, SQLAlchemy, 
 ## Notes
 
 - The first registered account becomes the admin.
-- OTP is generated locally and stored in the database for verification.
+- OTP is emailed when SMTP is configured. In local development, it can also be flashed directly for testing.
 - Email notifications are optional and require SMTP credentials in `.env`.
 - The production deployment target for this repository is a single Python web service. There is no `package.json` in this repo.
 

@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from datetime import timedelta
 
 from dotenv import load_dotenv
 
@@ -42,5 +43,16 @@ class Config:
         'SESSION_COOKIE_SECURE',
         default=os.getenv('RENDER') == 'true',
     )
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'
     REMEMBER_COOKIE_SECURE = SESSION_COOKIE_SECURE
+    REMEMBER_COOKIE_HTTPONLY = True
+    REMEMBER_COOKIE_SAMESITE = 'Lax'
+    PERMANENT_SESSION_LIFETIME = timedelta(hours=12)
     PREFERRED_URL_SCHEME = 'https' if SESSION_COOKIE_SECURE else 'http'
+    MAX_CONTENT_LENGTH = 2 * 1024 * 1024
+    OTP_EXPIRY_MINUTES = int(os.getenv('OTP_EXPIRY_MINUTES', 10))
+    SHOW_OTP_IN_FLASH = _get_bool_env(
+        'SHOW_OTP_IN_FLASH',
+        default=os.getenv('RENDER') != 'true',
+    )

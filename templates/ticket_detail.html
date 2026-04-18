@@ -3,19 +3,29 @@
 {% block content %}
 <div class="card shadow-sm mb-4">
   <div class="card-body">
-    <div class="d-flex justify-content-between align-items-start">
+    <div class="d-flex justify-content-between align-items-start flex-column flex-md-row gap-3">
       <div>
         <h3>{{ ticket.title }}</h3>
-        <p class="text-muted mb-1">Category: {{ ticket.category }} • Priority: {{ ticket.priority }}</p>
+        <p class="text-muted mb-1">Category: {{ ticket.category }} | Priority: {{ ticket.priority }}</p>
         <span class="badge bg-{{ status_styles[ticket.status] }}">{{ ticket.status }}</span>
       </div>
       <div class="text-end">
         <p class="mb-1"><strong>Submitted by</strong></p>
-        <p class="text-muted">{{ ticket.user.name }}</p>
+        <p class="text-muted mb-1">{{ ticket.user.name }}</p>
+        <p class="text-muted small mb-0">{{ ticket.user.email }}</p>
       </div>
     </div>
     <hr>
     <p>{{ ticket.description }}</p>
+    <div class="d-flex gap-2 flex-wrap">
+      <a href="{{ url_for('ticket.dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+      {% if current_user.role == 'admin' or current_user.id == ticket.user_id %}
+        <form method="POST" action="{{ url_for('ticket.delete_ticket', ticket_id=ticket.id) }}" onsubmit="return confirm('Delete this ticket permanently?');">
+          {{ csrf_field() }}
+          <button type="submit" class="btn btn-outline-danger">Delete Ticket</button>
+        </form>
+      {% endif %}
+    </div>
   </div>
 </div>
 
@@ -28,6 +38,7 @@
           <div class="d-flex justify-content-between">
             <div>
               <strong>{{ update.status }}</strong>
+              <p class="mb-1 small text-muted">Updated by {{ update.author.name }}</p>
               <p class="mb-1 text-muted">{{ update.comment or 'No comment' }}</p>
             </div>
             <small class="text-muted">{{ update.timestamp.strftime('%b %d, %Y %H:%M') }}</small>
@@ -43,13 +54,14 @@
   <div class="col-lg-5">
     <div class="card shadow-sm p-4">
       <h5>Admin ticket update</h5>
-      <form method="POST">
+      <form method="POST" action="{{ url_for('ticket.update_ticket', ticket_id=ticket.id) }}">
+        {{ csrf_field() }}
         <div class="mb-3">
           <label class="form-label">Change status</label>
           <select class="form-select" name="status">
-            <option value="Open" {% if ticket.status == 'Open' %}selected{% endif %}>Open</option>
-            <option value="In Progress" {% if ticket.status == 'In Progress' %}selected{% endif %}>In Progress</option>
-            <option value="Resolved" {% if ticket.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+            {% for status in ticket_statuses %}
+              <option value="{{ status }}" {% if ticket.status == status %}selected{% endif %}>{{ status }}</option>
+            {% endfor %}
           </select>
         </div>
         <div class="mb-3">
